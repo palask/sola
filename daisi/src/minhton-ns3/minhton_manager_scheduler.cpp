@@ -395,6 +395,7 @@ void MinhtonManager::Scheduler::parseRequests() {
       return;
     }
   } catch (const std::invalid_argument &e) {
+    // TODO: Add exception handling?
   }
 
   std::shared_ptr<ScenariofileParser::Table> requests;

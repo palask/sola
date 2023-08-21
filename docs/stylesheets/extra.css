@@ -46,6 +46,11 @@ figcaption strong {
 
 /* End: Figures */
 
+/* Reduce width for description in scenariofile tables */
+h1#scenario-file~div td:last-child {
+    max-width: 14rem;
+}
+
 @keyframes text-color-animation {
     0% {
         color: #37A7DF;

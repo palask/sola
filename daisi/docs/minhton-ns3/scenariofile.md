@@ -4,6 +4,50 @@ The Management Overlay (MO) allows to create a Peer-to-Peer (P2P) Network.
 This creation and maintenance can be simulated by ns-3.
 Scenario files are used for this purposes and describe what exactly will be simulated in the [YAML](https://yaml.org/) format.
 
+## Creating a scenario file step-by-step
+
+### General configuration
+
+Please refer to the [scenario file explanation for SOLA](../sola-ns3/scenario_files.md), since those fields are the same in every module.
+MINHTON required some additional fields at the top level:
+
+| Parameter | Default value | Required | Description |
+|---|---|:-:|---|
+| `fanout:` |  `2` | :fontawesome-solid-star-of-life: | uint64_t, [fanout](../../management_overlay/glossary.md#f) *m* must be in the range *m >= 2* |
+
+The completed section of the scenario file can look like the following example:
+
+```yaml
+title: MINHTON_default
+name: MO test with fanout 2
+version: 0.1
+randomSeed: 1
+stoptime: 10000000
+defaultDelay: 5000
+outputPath: /work/ns3/results/
+logLevel: info
+
+## MINHTON specific
+fanout: 2
+```
+
+### `timeouts:`
+
+...
+
+```yaml
+timeouts:
+    bootstrap_response: 500
+    join_response: 500
+    join_accept_ack_response: 500
+    replacement_offer_response: 500
+    replacement_ack_response: 500
+    dsn_aggregation: 4000
+    inquiry_aggregation: 1000
+```
+
+### `algorithms:`
+
 Currently, the MO supports the following creational pattern:
 
 <!--- `baton_star` [[1]](#references) (BATON\*; height-balanced tree)
@@ -14,51 +58,33 @@ The MINHTON algorithm is based on nBATON\* [[2]](#references), which in turn is 
 
 This **must** be declared in the scenario file under `algorithms:`.
 
-In addition, the simulation environment also requires a sequence, which instructs the simulator what happens in which order.
-
-- In the beginning the root node already exists. This does not need to be declared.
-- Sequences are executed sequentially.
-
-## Initial Scenario File
-
 ```yaml
-# required
-title: MINHTON_default
-name: MO test with fanout 2
-stoptime: 10000000
-version: 0.1
-physicalLayer: ETH
-fanout: 2
-
-defaultDelay: 5000
-logLevel: info
-randomSeed: 1 # 0 = random
-
-timeouts:
-    bootstrap_response: 500
-    join_response: 500
-    join_accept_ack_response: 500
-    replacement_offer_response: 500
-    replacement_ack_response: 500
-    dsn_aggregation: 4000
-    inquiry_aggregation: 1000
-
 algorithms:
     join: minhton
     leave: minhton
     search_exact: minhton
     response: general
     bootstrap: general
+```
 
+### `peerDiscoveryEnvironment:`
+
+...
+
+```yaml
 peerDiscoveryEnvironment:
     attributes: off
     requests: off
-
-scenarioSequence:
-    ...
 ```
 
-## Adding Nodes
+### `scenarioSequence:`
+
+The simulation environment also requires a sequence, which instructs the simulator what happens in which order.
+
+- In the beginning the root node already exists. This does not need to be declared.
+- Sequences are executed sequentially.
+
+### Adding Nodes
 
 The following `scenarioSequence` let 100 nodes join the network. The following `scenarioSequence` let 100 nodes join the network.
 
@@ -70,7 +96,7 @@ scenarioSequence:
         delay: 1000
 ```
 
-## Removing Nodes
+### Removing Nodes
 
 The following `scenarioSequence` let 100 nodes join the network, and than 100 nodes are leaving the network.
 
@@ -86,7 +112,7 @@ scenarioSequence:
         delay: 1000
 ```
 
-## Searching Nodes
+### Searching Nodes
 
 The following `scenarioSequence` let 100 nodes join the network, and than 100 search-exact queries are executed. After 100 search-exact queries are executed, "search-all" is executed.
 
@@ -103,7 +129,7 @@ scenarioSequence:
         delay: 1000
 ```
 
-## Static P2P Build
+### Static P2P Build
 
 Building a network statically of 100 + 1 nodes without needing join.
 It is only possible to execute this command once right in the beginning.
@@ -117,10 +143,14 @@ The event timestamp cannot be 0 - therefore you need to increase the time by a l
     delay: 1000
 ```
 
+### Full example
+
+...
+
 ## References
 
-[1] P. Laskowski, P. Detzner, und S. Bondorf, „Tree-structured Overlays with Minimal Height: Construction, Maintenance and Operation“, in DisCoTec 2023, Lisbon, Portugal.
+[1] P. Laskowski, P. Detzner, and S. Bondorf, “Tree-structured Overlays with Minimal Height: Construction, Maintenance and Operation,” in Proceedings of the 17th ACM International Conference on Distributed and Event-based Systems, Neuchatel Switzerland: ACM, Jun. 2023, pp. 168–176. doi: 10.1145/3583678.3596894.
 
 [2] P. Detzner, J. Gödeke, and S. Bondorf, “[Low-Cost search in Tree-Structured P2P overlays: The Null-Balance benefit](https://doi.org/10.1109/LCN52139.2021.9525004),” Edmonton, Canada, Oct. 2021.
 
-[3] H. V. Jagadish, B. C. Ooi, K.-L. Tan, Q. H. Vu, und R. Zhang, „Speeding up search in peer-to-peer networks with a multi-way tree structure“, in Proceedings of the 2006 ACM SIGMOD international conference on Management of data  - SIGMOD ’06, Chicago, IL, USA, 2006, S. 1. doi: 10.1145/1142473.1142475.
+[3] H. V. Jagadish, B. C. Ooi, K.-L. Tan, Q. H. Vu, and R. Zhang, „Speeding up search in peer-to-peer networks with a multi-way tree structure“, in Proceedings of the 2006 ACM SIGMOD international conference on Management of data  - SIGMOD ’06, Chicago, IL, USA, 2006, S. 1. doi: 10.1145/1142473.1142475.
